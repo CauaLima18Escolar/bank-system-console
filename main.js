@@ -17,7 +17,26 @@ class bankSystem {
         console.clear();
         alert('Procedimento de Login. Preencha os dados corretamente.');
 
-        this.clientName = prompt('Nome do cliente')
+        this.clientLogEmail = prompt('E-mail do cliente');
+        this.clientLogPassword = prompt('Senha do cliente');
+
+        this.clientFound = true
+
+        for (let clientData of this.bankClientsData){
+            if (clientData.clientEmail === this.clientLogEmail && clientData.clientPassword === this.clientLogPassword){
+                alert(`Seja bem-vindo, ${clientData.clientName}!`);
+                this.clientFound = true
+                break
+
+            } else {
+                this.clientFound = false
+            };
+        }
+
+        if (!this.clientFound){
+            alert('Cliente não encontrado. Tente novamente');
+            this.bankLogin();
+        };
     };
 
     bankRegister(){
@@ -29,7 +48,31 @@ class bankSystem {
         this.clientPassword = prompt('Crie uma senha: ');
 
         this.client = new newClient(this.clientName, this.clientEmail, this.clientPassword);
-        this.bankClientsData.push(this.client)
+
+        function thisEmailExists(email, bankClientsData){
+            let emailExists = false
+
+            if (bankClientsData.length === 0){
+                console.log('Sem cadastros')
+                return false
+            };
+
+            bankClientsData.forEach((client) => {
+                if (client.clientEmail === email){
+                    console.log('Esse e-mail já existe no sistema')
+                    return emailExists = true
+                };
+            });
+
+            return emailExists
+        };
+
+        if (thisEmailExists(this.client.clientEmail, this.bankClientsData)){
+            alert('O E-mail informado já existe no sistema. Tente com outro e-mail ou faça login.');
+        } else {
+            this.bankClientsData.push(this.client);
+            alert('Cadastro realizado com sucesso.');
+        };
     };
 
     main(){
@@ -58,15 +101,15 @@ class bankSystem {
 class newClient {
     constructor(clientName, clientEmail, clientPassword){
         this.clientName = clientName
-        this.clientPassword = clientPassword
         this.clientEmail = clientEmail
+        this.clientPassword = clientPassword
 
         if (!this.validateName(this.clientName)){
             throw new Error('O nome deve incluir pelo menos o nome e sobrenome.');
 
         } else if (!this.validatePassword(this.clientPassword)){
             throw new Error('A senha precisa ter no mínimo 8 caracteres e no máximo 16.');
-        }
+        };
     };
 
     validateName(name){
